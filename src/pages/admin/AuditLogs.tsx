@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileSpreadsheet, Search, Download, Filter } from 'lucide-react';
+import { Search, Download } from 'lucide-react';
 
 interface AuditLogEntry {
     id: string;

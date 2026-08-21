@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole, LoginCredentials } from '../types/auth';
 import { DEMO_USERS, createMockJwt, ROLE_DEFAULT_ROUTES } from '../data/mockAuth';
+import { canAccessRoute, getUserPermissions, hasAllPermissions, hasAnyPermission, hasPermission } from '../utils/rbac';
 
 interface AuthContextType {
     user: User | null;
@@ -9,7 +10,13 @@ interface AuthContextType {
     isLoading: boolean;
     login: (credentials: LoginCredentials) => Promise<string>;
     logout: () => void;
+    updateCurrentUser: (updatedUser: User) => void;
     hasRole: (roles: UserRole[]) => boolean;
+    hasPermission: (permission: string) => boolean;
+    hasAnyPermission: (permissions: string[]) => boolean;
+    hasAllPermissions: (permissions: string[]) => boolean;
+    canAccessRoute: (route: string) => boolean;
+    permissions: string[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -68,26 +75,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('mule_auth_user');
     };
 
+    const updateCurrentUser = (updatedUser: User) => {
+        setUser(updatedUser);
+        if (updatedUser) {
+            localStorage.setItem('mule_auth_user', JSON.stringify(updatedUser));
+        }
+    };
+
     const hasRole = (roles: UserRole[]): boolean => {
         return !!user && roles.includes(user.role);
     };
 
+    const permissions = getUserPermissions(user);
+
     return (
         <AuthContext.Provider
-      value= {{
-        user,
-            token,
-            isAuthenticated: !!user && !!token,
+            value={{
+                user,
+                token,
+                isAuthenticated: !!user && !!token,
                 isLoading,
                 login,
                 logout,
+                updateCurrentUser,
                 hasRole,
-      }
-}
-    >
-    { children }
-    </AuthContext.Provider>
-  );
+                get permissions() { return permissions; },
+                hasPermission: (permission: string) => hasPermission(user, permission),
+                hasAnyPermission: (permissionList: string[]) => hasAnyPermission(user, permissionList),
+                hasAllPermissions: (permissionList: string[]) => hasAllPermissions(user, permissionList),
+                canAccessRoute: (route: string) => canAccessRoute(user, route),
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => {

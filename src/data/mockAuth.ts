@@ -1,33 +1,11 @@
-import { User, UserRole } from '../types/auth';
+import { User } from '../types/auth';
+import { getStoredUsers } from './mockUsers';
 
-export const DEMO_USERS: Record<string, User> = {
-    'admin@example.com': {
-        id: 'usr-001',
-        email: 'admin@example.com',
-        name: 'Sarah Connor',
-        role: 'Admin',
-        department: 'Financial Security & Compliance',
-        lastLogin: new Date().toISOString(),
-    },
-    'mlengineer@example.com': {
-        id: 'usr-002',
-        email: 'mlengineer@example.com',
-        name: 'Alex Rivera',
-        role: 'ML Engineer',
-        department: 'AI & Heterogeneous Graph Modeling',
-        lastLogin: new Date().toISOString(),
-    },
-    'analyst@example.com': {
-        id: 'usr-003',
-        email: 'analyst@example.com',
-        name: 'David Chen',
-        role: 'AML Analyst',
-        department: 'Mule Account Investigation',
-        lastLogin: new Date().toISOString(),
-    },
-};
+export const DEMO_USERS: Record<string, User> = Object.fromEntries(
+    getStoredUsers().map((user) => [user.email.toLowerCase(), user])
+);
 
-export const ROLE_DEFAULT_ROUTES: Record<UserRole, string> = {
+export const ROLE_DEFAULT_ROUTES: Record<string, string> = {
     'Admin': '/admin/dashboard',
     'ML Engineer': '/ml/dashboard',
     'AML Analyst': '/analyst/dashboard',

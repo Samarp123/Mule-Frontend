@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { Plus, Search, Shield, Edit2, Trash2, Check, X, UserPlus } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Search, X, UserPlus } from 'lucide-react';
 import { UserRole } from '../../types/auth';
+import { getStoredUsers, saveStoredUsers } from '../../data/mockUsers';
+import { useAuth } from '../../context/AuthContext';
+import { roleIdFromUserRole } from '../../data/mockRoles';
 
 interface UserRecord {
     id: string;
@@ -11,65 +14,108 @@ interface UserRecord {
     lastActive: string;
 }
 
-const INITIAL_USERS: UserRecord[] = [
-    { id: 'USR-001', name: 'System Admin', email: 'admin@example.com', role: 'Admin', status: 'Active', lastActive: 'Just now' },
-    { id: 'USR-002', name: 'Dr. Sarah Chen', email: 'ml@example.com', role: 'ML Engineer', status: 'Active', lastActive: '15 mins ago' },
-    { id: 'USR-003', name: 'Marcus Vance', email: 'analyst@example.com', role: 'AML Analyst', status: 'Active', lastActive: '1 hour ago' },
-    { id: 'USR-004', name: 'Elena Rostova', email: 'elena.r@example.com', role: 'AML Analyst', status: 'Active', lastActive: '3 hours ago' },
-    { id: 'USR-005', name: 'David Kim', email: 'd.kim@example.com', role: 'ML Engineer', status: 'Suspended', lastActive: '2 days ago' },
-];
+const INITIAL_USERS: UserRecord[] = getStoredUsers().map((user) => ({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    status: user.status ?? 'Active',
+    lastActive: user.lastLogin ? 'Recently active' : 'Never',
+}));
 
 export const UserManagement: React.FC = () => {
+    const { user, hasPermission, updateCurrentUser } = useAuth();
     const [users, setUsers] = useState<UserRecord[]>(INITIAL_USERS);
+    const roleOptions = ['Admin', 'ML Engineer', 'AML Analyst'];
     const [searchTerm, setSearchTerm] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [newUser, setNewUser] = useState({ name: '', email: '', role: 'AML Analyst' as UserRole });
+
+    const filteredUsers = useMemo(
+        () =>
+            users.filter(
+                (u) =>
+                    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    u.role.toLowerCase().includes(searchTerm.toLowerCase())
+            ),
+        [searchTerm, users]
+    );
+
+    const saveUsers = (nextUsers: UserRecord[]) => {
+        setUsers(nextUsers);
+        const persisted = nextUsers.map((entry) => ({
+            id: entry.id,
+            name: entry.name,
+            email: entry.email,
+            role: entry.role,
+            roleIds: [roleIdFromUserRole(entry.role)],
+            status: entry.status,
+            department: 'Security Operations',
+            lastLogin: new Date().toISOString(),
+        }));
+
+        saveStoredUsers(persisted);
+
+        const currentSession = user ? persisted.find((item) => item.email === user.email) ?? null : null;
+        if (currentSession && user) {
+            updateCurrentUser({ ...user, role: currentSession.role, roleIds: currentSession.roleIds, lastLogin: new Date().toISOString() });
+        }
+    };
 
     const handleAddUser = (e: React.FormEvent) => {
         e.preventDefault();
         if (!newUser.name || !newUser.email) return;
 
         const userToAdd: UserRecord = {
-            id: `USR-00${users.length + 1}`,
+            id: `USR-${String(users.length + 1).padStart(3, '0')}`,
             name: newUser.name,
             email: newUser.email,
             role: newUser.role,
             status: 'Active',
-            lastActive: 'Never',
+            lastActive: 'Just now',
         };
 
-        setUsers([...users, userToAdd]);
+        saveUsers([...users, userToAdd]);
         setNewUser({ name: '', email: '', role: 'AML Analyst' });
         setShowAddModal(false);
     };
 
     const toggleStatus = (id: string) => {
-        setUsers(users.map(u => u.id === id ? { ...u, status: u.status === 'Active' ? 'Suspended' : 'Active' } : u));
+        saveUsers(
+            users.map((entry) =>
+                entry.id === id ? { ...entry, status: entry.status === 'Active' ? 'Suspended' : 'Active', lastActive: 'Just now' } : entry
+            )
+        );
     };
 
-    const filteredUsers = users.filter(u =>
-        u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handleRoleChange = (id: string, nextRole: UserRole) => {
+        saveUsers(
+            users.map((entry) =>
+                entry.id === id ? { ...entry, role: nextRole, lastActive: 'Just now' } : entry
+            )
+        );
+    };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" data-aos="fade-up">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl font-bold text-slate-100">User Management</h1>
                     <p className="text-xs text-slate-400">Manage user identities, access statuses, and assigned role profiles.</p>
                 </div>
-                <button
-                    onClick={() => setShowAddModal(true)}
-                    className="flex items-center gap-2 px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium transition-colors shadow-lg shadow-blue-600/20"
-                >
-                    <UserPlus className="w-4 h-4" />
-                    <span>Provision New User</span>
-                </button>
+                {hasPermission('user_create') && (
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="flex items-center gap-2 px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium transition-colors shadow-lg shadow-blue-600/20"
+                    >
+                        <UserPlus className="w-4 h-4" />
+                        <span>Provision New User</span>
+                    </button>
+                )}
             </div>
 
-            {/* Filter and Search Bar */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between gap-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between gap-4" data-aos="fade-up" data-aos-delay="50">
                 <div className="relative flex-1 max-w-md">
                     <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
@@ -85,8 +131,7 @@ export const UserManagement: React.FC = () => {
                 </div>
             </div>
 
-            {/* User Table */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl" data-aos="fade-up" data-aos-delay="100">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                         <thead>
@@ -100,39 +145,41 @@ export const UserManagement: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-800/60">
-                            {filteredUsers.map((u) => (
-                                <tr key={u.id} className="hover:bg-slate-800/30 transition-colors">
-                                    <td className="py-3 px-4 font-mono text-slate-400">{u.id}</td>
+                            {filteredUsers.map((user) => (
+                                <tr key={user.id} className="hover:bg-slate-800/30 transition-colors">
+                                    <td className="py-3 px-4 font-mono text-slate-400">{user.id}</td>
                                     <td className="py-3 px-4">
-                                        <div className="font-medium text-slate-200">{u.name}</div>
-                                        <div className="text-[11px] text-slate-500 font-mono">{u.email}</div>
+                                        <div className="font-medium text-slate-200">{user.name}</div>
+                                        <div className="text-[11px] text-slate-500 font-mono">{user.email}</div>
                                     </td>
                                     <td className="py-3 px-4">
-                                        <span className={`inline-block px-2 py-0.5 rounded border text-[10px] font-medium font-mono ${u.role === 'Admin' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' :
-                                                u.role === 'ML Engineer' ? 'bg-purple-500/10 text-purple-400 border-purple-500/30' :
-                                                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                                            }`}>
-                                            {u.role}
-                                        </span>
-                                    </td>
-                                    <td className="py-3 px-4">
-                                        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${u.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
-                                            }`}>
-                                            <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'Active' ? 'bg-emerald-400' : 'bg-red-400'}`} />
-                                            {u.status}
-                                        </span>
-                                    </td>
-                                    <td className="py-3 px-4 text-slate-400 font-mono">{u.lastActive}</td>
-                                    <td className="py-3 px-4 text-right space-x-2">
-                                        <button
-                                            onClick={() => toggleStatus(u.id)}
-                                            className={`px-2.5 py-1 rounded text-[11px] border transition-colors ${u.status === 'Active'
-                                                    ? 'border-red-500/30 text-red-400 hover:bg-red-500/10'
-                                                    : 'border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'
-                                                }`}
+                                        <select
+                                            value={user.role}
+                                            onChange={(e) => handleRoleChange(user.id, e.target.value as UserRole)}
+                                            disabled={!hasPermission('role_assign')}
+                                            className={`rounded border px-2 py-1 text-[10px] font-medium font-mono ${user.role === 'Admin' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : user.role === 'ML Engineer' ? 'bg-purple-500/10 text-purple-400 border-purple-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'} disabled:cursor-not-allowed disabled:opacity-60`}
                                         >
-                                            {u.status === 'Active' ? 'Suspend' : 'Activate'}
-                                        </button>
+                                            {roleOptions.map((roleName) => (
+                                                <option key={roleName} value={roleName}>{roleName}</option>
+                                            ))}
+                                        </select>
+                                    </td>
+                                    <td className="py-3 px-4">
+                                        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${user.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'Active' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                                            {user.status}
+                                        </span>
+                                    </td>
+                                    <td className="py-3 px-4 text-slate-400 font-mono">{user.lastActive}</td>
+                                    <td className="py-3 px-4 text-right space-x-2">
+                                        {hasPermission('user_deactivate') && (
+                                            <button
+                                                onClick={() => toggleStatus(user.id)}
+                                                className={`px-2.5 py-1 rounded text-[11px] border transition-colors ${user.status === 'Active' ? 'border-red-500/30 text-red-400 hover:bg-red-500/10' : 'border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'}`}
+                                            >
+                                                {user.status === 'Active' ? 'Suspend' : 'Activate'}
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
@@ -141,7 +188,6 @@ export const UserManagement: React.FC = () => {
                 </div>
             </div>
 
-            {/* Add User Modal */}
             {showAddModal && (
                 <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
@@ -187,9 +233,9 @@ export const UserManagement: React.FC = () => {
                                     onChange={(e) => setNewUser({ ...newUser, role: e.target.value as UserRole })}
                                     className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-blue-500"
                                 >
-                                    <option value="AML Analyst">AML Analyst</option>
-                                    <option value="ML Engineer">ML Engineer</option>
-                                    <option value="Admin">Admin</option>
+                                    {roleOptions.map((roleName) => (
+                                        <option key={roleName} value={roleName}>{roleName}</option>
+                                    ))}
                                 </select>
                             </div>
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Search, Bell, LogOut, Shield, AlertTriangle } from 'lucide-react';
+import { Search, Bell, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types/auth';
+import { ThemeToggle } from './ThemeToggle';
 
 const ROLE_COLORS: Record<UserRole, { bg: string; text: string; border: string }> = {
     'Admin': { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30' },
@@ -18,20 +19,22 @@ export const Header: React.FC = () => {
     const roleStyle = user ? ROLE_COLORS[user.role] : ROLE_COLORS['AML Analyst'];
 
     return (
-        <header className="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between sticky top-0 z-30">
+        <header className="dashboard-header h-16 px-6 flex items-center justify-between sticky top-0 z-30">
             <div className="flex items-center gap-4 flex-1 max-w-md">
                 <div className="relative w-full">
                     <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                         type="text"
                         placeholder="Search accounts, graph nodes, dataset hashes, or models..."
-                        className="w-full pl-9 pr-4 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors font-mono"
+                        className="premium-input w-full pl-9 pr-4 py-1.5 rounded-lg text-xs focus:outline-none focus:border-blue-500 transition-colors font-mono"
                     />
                 </div>
             </div>
 
             <div className="flex items-center gap-4">
-                <div className={`hidden md:flex items-center gap-2 px-2.5 py-1 bg-slate-950 border rounded-md text-[11px] font-mono ${isConnected ? 'border-emerald-500/30 text-emerald-400' : 'border-slate-800 text-slate-500'
+                <ThemeToggle />
+
+                <div className={`hidden md:flex items-center gap-2 px-2.5 py-1 bg-slate-950/60 border rounded-md text-[11px] font-mono ${isConnected ? 'border-emerald-500/30 text-emerald-400' : 'border-slate-700 text-slate-400'
                     }`}>
                     <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-slate-600'}`} />
                     <span>{isConnected ? 'FastAPI Connected' : 'API Disconnected'}</span>
@@ -57,16 +60,16 @@ export const Header: React.FC = () => {
                     )}
                 </div>
 
-                <div className="h-6 w-px bg-slate-800" />
+                <div className="h-6 w-px bg-slate-700" />
 
                 {user && (
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 font-semibold text-xs">
+                            <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 font-semibold text-xs shadow-lg shadow-slate-900/40">
                                 {user.name.split(' ').map((n) => n[0]).join('')}
                             </div>
                             <div className="hidden sm:block text-left">
-                                <div className="text-xs font-semibold text-slate-200 leading-tight">{user.name}</div>
+                                <div className="text-xs font-semibold text-slate-100 leading-tight">{user.name}</div>
                                 <div className={`inline-block text-[10px] px-1.5 py-0.5 rounded border mt-0.5 font-medium ${roleStyle.bg} ${roleStyle.text} ${roleStyle.border}`}>
                                     {user.role}
                                 </div>

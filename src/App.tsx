@@ -1,9 +1,16 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { RBACProvider } from './context/RBACContext';
 import { Login } from './pages/auth/Login';
 import { RoleProtectedRoute } from './components/common/RoleProtectedRoute';
 import { DashboardLayout } from './layouts/DashboardLayout';
+import { UnauthorizedPage } from './pages/Unauthorized';
+
+// Public marketing pages
+import { LandingPage } from './pages/public/LandingPage';
+import { AboutPage } from './pages/public/AboutPage';
+import { FeaturesPage } from './pages/public/FeaturesPage';
+import { ContactPage } from './pages/public/ContactPage';
 
 // Admin Pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -34,66 +41,73 @@ import { Reports } from './pages/analyst/Reports';
 export default function App() {
     return (
         <AuthProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
+            <RBACProvider>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/features" element={<FeaturesPage />} />
+                        <Route path="/contact" element={<ContactPage />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-                    {/* Admin Protected Hierarchy */}
-                    <Route
-                        path="/admin"
-                        element={
-                            <RoleProtectedRoute allowedRoles={['Admin']}>
-                                <DashboardLayout />
-                            </RoleProtectedRoute>
-                        }
-                    >
-                        <Route path="dashboard" element={<AdminDashboard />} />
-                        <Route path="users" element={<UserManagement />} />
-                        <Route path="roles" element={<RoleManagement />} />
-                        <Route path="model-approval" element={<ModelApproval />} />
-                        <Route path="security" element={<SecurityMonitoring />} />
-                        <Route path="audit-logs" element={<AuditLogs />} />
-                    </Route>
+                        {/* Admin Protected Hierarchy */}
+                        <Route
+                            path="/admin"
+                            element={
+                                <RoleProtectedRoute allowedRoles={['Admin']} requiredPermissions={['access_overview_view']}>
+                                    <DashboardLayout />
+                                </RoleProtectedRoute>
+                            }
+                        >
+                            <Route path="dashboard" element={<RoleProtectedRoute allowedRoles={['Admin']} requiredPermissions={['access_overview_view']}><AdminDashboard /></RoleProtectedRoute>} />
+                            <Route path="users" element={<RoleProtectedRoute allowedRoles={['Admin']} requiredPermissions={['user_view']}><UserManagement /></RoleProtectedRoute>} />
+                            <Route path="roles" element={<RoleProtectedRoute allowedRoles={['Admin']} requiredPermissions={['role_view']}><RoleManagement /></RoleProtectedRoute>} />
+                            <Route path="model-approval" element={<RoleProtectedRoute allowedRoles={['Admin']} requiredPermissions={['permission_view']}><ModelApproval /></RoleProtectedRoute>} />
+                            <Route path="security" element={<RoleProtectedRoute allowedRoles={['Admin']} requiredPermissions={['permission_view']}><SecurityMonitoring /></RoleProtectedRoute>} />
+                            <Route path="audit-logs" element={<RoleProtectedRoute allowedRoles={['Admin']} requiredPermissions={['permission_view']}><AuditLogs /></RoleProtectedRoute>} />
+                        </Route>
 
-                    {/* ML Engineer Protected Hierarchy */}
-                    <Route
-                        path="/ml"
-                        element={
-                            <RoleProtectedRoute allowedRoles={['ML Engineer']}>
-                                <DashboardLayout />
-                            </RoleProtectedRoute>
-                        }
-                    >
-                        <Route path="dashboard" element={<MLDashboard />} />
-                        <Route path="datasets" element={<Datasets />} />
-                        <Route path="graph-stats" element={<GraphStatistics />} />
-                        <Route path="training" element={<Training />} />
-                        <Route path="performance" element={<ModelPerformance />} />
-                        <Route path="registry" element={<ModelRegistry />} />
-                        <Route path="experiments" element={<ExperimentHistory />} />
-                    </Route>
+                        {/* ML Engineer Protected Hierarchy */}
+                        <Route
+                            path="/ml"
+                            element={
+                                <RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}>
+                                    <DashboardLayout />
+                                </RoleProtectedRoute>
+                            }
+                        >
+                            <Route path="dashboard" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><MLDashboard /></RoleProtectedRoute>} />
+                            <Route path="datasets" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><Datasets /></RoleProtectedRoute>} />
+                            <Route path="graph-stats" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><GraphStatistics /></RoleProtectedRoute>} />
+                            <Route path="training" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><Training /></RoleProtectedRoute>} />
+                            <Route path="performance" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_metrics_view']}><ModelPerformance /></RoleProtectedRoute>} />
+                            <Route path="registry" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><ModelRegistry /></RoleProtectedRoute>} />
+                            <Route path="experiments" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_results_view']}><ExperimentHistory /></RoleProtectedRoute>} />
+                        </Route>
 
-                    {/* AML Analyst Protected Hierarchy */}
-                    <Route
-                        path="/analyst"
-                        element={
-                            <RoleProtectedRoute allowedRoles={['AML Analyst']}>
-                                <DashboardLayout />
-                            </RoleProtectedRoute>
-                        }
-                    >
-                        <Route path="dashboard" element={<AnalystDashboard />} />
-                        <Route path="upload" element={<UploadDataset />} />
-                        <Route path="jobs" element={<DetectionJobs />} />
-                        <Route path="accounts" element={<SuspiciousAccounts />} />
-                        <Route path="investigation" element={<Investigation />} />
-                        <Route path="network" element={<NetworkVisualization />} />
-                        <Route path="reports" element={<Reports />} />
-                    </Route>
+                        {/* AML Analyst Protected Hierarchy */}
+                        <Route
+                            path="/analyst"
+                            element={
+                                <RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}>
+                                    <DashboardLayout />
+                                </RoleProtectedRoute>
+                            }
+                        >
+                            <Route path="dashboard" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}><AnalystDashboard /></RoleProtectedRoute>} />
+                            <Route path="upload" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><UploadDataset /></RoleProtectedRoute>} />
+                            <Route path="jobs" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}><DetectionJobs /></RoleProtectedRoute>} />
+                            <Route path="accounts" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><SuspiciousAccounts /></RoleProtectedRoute>} />
+                            <Route path="investigation" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['investigation_view']}><Investigation /></RoleProtectedRoute>} />
+                            <Route path="network" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><NetworkVisualization /></RoleProtectedRoute>} />
+                            <Route path="reports" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}><Reports /></RoleProtectedRoute>} />
+                        </Route>
 
-                    <Route path="*" element={<Navigate to="/login" replace />} />
-                </Routes>
-            </BrowserRouter>
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </BrowserRouter>
+            </RBACProvider>
         </AuthProvider>
     );
 }

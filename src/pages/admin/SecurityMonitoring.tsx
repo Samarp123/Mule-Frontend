@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, ShieldAlert, KeyRound, Server, RefreshCw } from 'lucide-react';
+import { ShieldAlert, KeyRound, Server } from 'lucide-react';
 
 export const SecurityMonitoring: React.FC = () => {
     return (

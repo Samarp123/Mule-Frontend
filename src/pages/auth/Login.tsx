@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Lock, Mail, AlertCircle, ArrowRight, KeyRound } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { UserRole } from '../../types/auth';
 
 export const Login: React.FC = () => {
     const [email, setEmail] = useState('admin@example.com');
@@ -36,22 +35,20 @@ export const Login: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
-            {/* Background Subtle Grid Effect */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
+        <div className="auth-shell min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+            <div className="absolute -top-16 left-10 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />
+            <div className="absolute bottom-10 right-10 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />
 
             <div className="w-full max-w-md relative z-10">
-                {/* Header Branding */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-blue-600/10 border border-blue-500/30 text-blue-400 mb-3 shadow-inner">
+                    <div className="brand-mark inline-flex items-center justify-center w-14 h-14 rounded-xl mb-3 shadow-inner">
                         <Shield className="w-8 h-8" />
                     </div>
                     <h1 className="text-2xl font-bold tracking-tight text-white">MuleDetector AML</h1>
                     <p className="text-xs text-slate-400 mt-1">Enterprise Mule Account & Heterogeneous Graph Detection</p>
                 </div>
 
-                {/* Card */}
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-sm">
+                <div className="auth-card rounded-2xl p-6">
                     <div className="flex items-center gap-2 border-b border-slate-800 pb-4 mb-6">
                         <KeyRound className="w-4 h-4 text-blue-400" />
                         <h2 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">System Access Portal</h2>
@@ -75,7 +72,7 @@ export const Login: React.FC = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="name@financial-institution.com"
-                                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors font-mono"
+                                    className="premium-input w-full pl-9 pr-3 py-2 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors font-mono"
                                 />
                             </div>
                         </div>
@@ -90,7 +87,7 @@ export const Login: React.FC = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••••••"
-                                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors font-mono"
+                                    className="premium-input w-full pl-9 pr-3 py-2 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors font-mono"
                                 />
                             </div>
                         </div>
@@ -101,7 +98,7 @@ export const Login: React.FC = () => {
                                     type="checkbox"
                                     checked={rememberMe}
                                     onChange={(e) => setRememberMe(e.target.checked)}
-                                    className="rounded bg-slate-950 border-slate-800 text-blue-600 focus:ring-0 focus:ring-offset-0"
+                                    className="rounded bg-white border-slate-300 text-blue-600 focus:ring-0 focus:ring-offset-0"
                                 />
                                 Remember session
                             </label>

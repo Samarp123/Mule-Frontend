@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckSquare, AlertOctagon, Check, X, Shield, Cpu } from 'lucide-react';
+import { Check, X, Cpu } from 'lucide-react';
 
 interface PendingModel {
     id: string;
