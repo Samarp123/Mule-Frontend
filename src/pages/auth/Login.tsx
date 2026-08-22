@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Lock, Mail, AlertCircle, ArrowRight, KeyRound } from 'lucide-react';
+import { Shield, Lock, User as UserIcon, AlertCircle, ArrowRight, KeyRound } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export const Login: React.FC = () => {
-    const [email, setEmail] = useState('admin@example.com');
-    const [password, setPassword] = useState('password123');
+    const [loginIdentifier, setLoginIdentifier] = useState('admin');
+    const [password, setPassword] = useState('admin123');
     const [rememberMe, setRememberMe] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,7 +19,12 @@ export const Login: React.FC = () => {
         setIsSubmitting(true);
 
         try {
-            const redirectUrl = await login({ email, password, rememberMe });
+            const redirectUrl = await login({
+                username: loginIdentifier,
+                email: loginIdentifier,
+                password,
+                rememberMe
+            });
             navigate(redirectUrl, { replace: true });
         } catch (err: any) {
             setError(err.message || 'Authentication failed. Please verify credentials.');
@@ -28,9 +33,9 @@ export const Login: React.FC = () => {
         }
     };
 
-    const setDemoAccount = (demoEmail: string) => {
-        setEmail(demoEmail);
-        setPassword('password123');
+    const setDemoAccount = (username: string, defaultPass: string = 'password123') => {
+        setLoginIdentifier(username);
+        setPassword(defaultPass);
         setError(null);
     };
 
@@ -63,15 +68,15 @@ export const Login: React.FC = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-xs font-medium text-slate-300 mb-1.5">Email / Username</label>
+                            <label className="block text-xs font-medium text-slate-300 mb-1.5">Username / Email</label>
                             <div className="relative">
-                                <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                                <UserIcon className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                                 <input
-                                    type="email"
+                                    type="text"
                                     required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="name@financial-institution.com"
+                                    value={loginIdentifier}
+                                    onChange={(e) => setLoginIdentifier(e.target.value)}
+                                    placeholder="Username or email (e.g. admin)"
                                     className="premium-input w-full pl-9 pr-3 py-2 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors font-mono"
                                 />
                             </div>
@@ -129,36 +134,36 @@ export const Login: React.FC = () => {
                         <div className="grid grid-cols-3 gap-2">
                             <button
                                 type="button"
-                                onClick={() => setDemoAccount('admin@example.com')}
+                                onClick={() => setDemoAccount('admin', 'admin123')}
                                 className="p-2 text-left bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-lg text-xs transition-colors"
                             >
                                 <div className="font-semibold text-blue-400">Admin</div>
-                                <div className="text-[10px] text-slate-500 truncate">admin@...</div>
+                                <div className="text-[10px] text-slate-500 truncate">admin / admin123</div>
                             </button>
 
                             <button
                                 type="button"
-                                onClick={() => setDemoAccount('mlengineer@example.com')}
+                                onClick={() => setDemoAccount('mlengineer', 'password123')}
                                 className="p-2 text-left bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-lg text-xs transition-colors"
                             >
                                 <div className="font-semibold text-purple-400">ML Engineer</div>
-                                <div className="text-[10px] text-slate-500 truncate">mlengineer@...</div>
+                                <div className="text-[10px] text-slate-500 truncate">mlengineer</div>
                             </button>
 
                             <button
                                 type="button"
-                                onClick={() => setDemoAccount('analyst@example.com')}
+                                onClick={() => setDemoAccount('analyst', 'password123')}
                                 className="p-2 text-left bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-lg text-xs transition-colors"
                             >
                                 <div className="font-semibold text-emerald-400">AML Analyst</div>
-                                <div className="text-[10px] text-slate-500 truncate">analyst@...</div>
+                                <div className="text-[10px] text-slate-500 truncate">analyst</div>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div className="text-center mt-6 text-[11px] text-slate-600 font-mono">
-                    MuleDetector Platform v2.4.0 • FastAPI / R-GCN Backed
+                    MuleDetector Platform v2.4.0 • Node.js / MongoDB / R-GCN Backed
                 </div>
             </div>
         </div>

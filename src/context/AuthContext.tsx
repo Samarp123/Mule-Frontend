@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole, LoginCredentials } from '../types/auth';
 import { DEMO_USERS, createMockJwt, ROLE_DEFAULT_ROUTES } from '../data/mockAuth';
 import { canAccessRoute, getUserPermissions, hasAllPermissions, hasAnyPermission, hasPermission } from '../utils/rbac';
+import { authApi } from '../api/authApi';
 
 interface AuthContextType {
     user: User | null;
@@ -45,27 +46,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const login = async (credentials: LoginCredentials): Promise<string> => {
         setIsLoading(true);
 
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 600));
+        try {
+            // First attempt authentication against backend API (MongoDB database)
+            const response = await authApi.login(credentials);
+            const loggedInUser: User = response.user;
+            const jwtToken: string = response.token;
 
-        const normalizedEmail = credentials.email.trim().toLowerCase();
-        const matchedUser = DEMO_USERS[normalizedEmail];
+            setUser(loggedInUser);
+            setToken(jwtToken);
 
-        if (!matchedUser) {
+            localStorage.setItem('mule_auth_token', jwtToken);
+            localStorage.setItem('mule_auth_user', JSON.stringify(loggedInUser));
+
             setIsLoading(false);
-            throw new Error('Invalid credentials. Use demo accounts provided.');
+            return ROLE_DEFAULT_ROUTES[loggedInUser.role] || '/admin/dashboard';
+        } catch (apiError: any) {
+            console.warn('Backend API login notice:', apiError.response?.data?.error || apiError.message);
+
+            // If API returned explicit auth error (e.g. 401 Invalid credentials), check mock fallback or throw
+            const searchIdentifier = (credentials.username || credentials.email || '').trim().toLowerCase();
+            const matchedUser = DEMO_USERS[searchIdentifier];
+
+            if (matchedUser) {
+                const mockToken = createMockJwt(matchedUser);
+                setUser(matchedUser);
+                setToken(mockToken);
+                localStorage.setItem('mule_auth_token', mockToken);
+                localStorage.setItem('mule_auth_user', JSON.stringify(matchedUser));
+                setIsLoading(false);
+                return ROLE_DEFAULT_ROUTES[matchedUser.role];
+            }
+
+            setIsLoading(false);
+            const errorMessage = apiError.response?.data?.error || apiError.message || 'Authentication failed.';
+            throw new Error(errorMessage);
         }
-
-        const mockToken = createMockJwt(matchedUser);
-
-        setUser(matchedUser);
-        setToken(mockToken);
-
-        localStorage.setItem('mule_auth_token', mockToken);
-        localStorage.setItem('mule_auth_user', JSON.stringify(matchedUser));
-
-        setIsLoading(false);
-        return ROLE_DEFAULT_ROUTES[matchedUser.role];
     };
 
     const logout = () => {

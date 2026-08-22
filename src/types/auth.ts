@@ -4,6 +4,7 @@ export type UserStatus = 'Active' | 'Suspended';
 
 export interface User {
     id: string;
+    username?: string;
     email: string;
     name: string;
     role: UserRole;
@@ -22,7 +23,8 @@ export interface AuthState {
 }
 
 export interface LoginCredentials {
-    email: string;
+    username?: string;
+    email?: string;
     password?: string;
     rememberMe?: boolean;
 }
