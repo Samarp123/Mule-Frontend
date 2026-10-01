@@ -3,6 +3,7 @@ import { User } from '../types/auth';
 export const MOCK_USERS: User[] = [
     {
         id: 'usr-001',
+        username: 'admin',
         name: 'Sarah Connor',
         email: 'admin@example.com',
         role: 'Admin',
@@ -13,6 +14,7 @@ export const MOCK_USERS: User[] = [
     },
     {
         id: 'usr-002',
+        username: 'mlengineer',
         name: 'Alex Rivera',
         email: 'mlengineer@example.com',
         role: 'ML Engineer',
@@ -23,6 +25,7 @@ export const MOCK_USERS: User[] = [
     },
     {
         id: 'usr-003',
+        username: 'analyst',
         name: 'David Chen',
         email: 'analyst@example.com',
         role: 'AML Analyst',
@@ -49,6 +52,17 @@ export const MOCK_USERS: User[] = [
         roleIds: ['ml_engineer'],
         status: 'Suspended',
         department: 'Model Operations',
+        lastLogin: new Date().toISOString(),
+    },
+    {
+        id: 'usr-006',
+        username: 'securityanalyst',
+        name: 'Morgan Blake',
+        email: 'securityanalyst@example.com',
+        role: 'Security Analyst',
+        roleIds: ['security_analyst'],
+        status: 'Active',
+        department: 'Cybersecurity & Threat Intelligence',
         lastLogin: new Date().toISOString(),
     },
 ];

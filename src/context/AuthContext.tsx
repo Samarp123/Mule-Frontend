@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole, LoginCredentials } from '../types/auth';
-import { DEMO_USERS, createMockJwt, ROLE_DEFAULT_ROUTES } from '../data/mockAuth';
+import { DEMO_USERS, DEMO_PASSWORDS, createMockJwt, ROLE_DEFAULT_ROUTES } from '../data/mockAuth';
 import { canAccessRoute, getUserPermissions, hasAllPermissions, hasAnyPermission, hasPermission } from '../utils/rbac';
 import { authApi } from '../api/authApi';
 
@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const searchIdentifier = (credentials.username || credentials.email || '').trim().toLowerCase();
             const matchedUser = DEMO_USERS[searchIdentifier];
 
-            if (matchedUser) {
+            if (matchedUser && DEMO_PASSWORDS[searchIdentifier] === credentials.password) {
                 const mockToken = createMockJwt(matchedUser);
                 setUser(matchedUser);
                 setToken(mockToken);

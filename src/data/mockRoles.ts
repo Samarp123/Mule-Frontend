@@ -28,6 +28,11 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
         'investigation_update',
         'access_overview_view',
         'role_assign',
+        'security_events_view',
+        'security_sessions_view',
+        'security_sessions_revoke',
+        'security_audit_view',
+        'security_dashboard_view',
     ],
     ml_engineer: [
         'model_view',
@@ -42,6 +47,14 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
         'transaction_view',
         'investigation_view',
         'investigation_update',
+    ],
+    security_analyst: [
+        'security_events_view',
+        'security_sessions_view',
+        'security_sessions_revoke',
+        'security_audit_view',
+        'security_dashboard_view',
+        'user_view',
     ],
 };
 
@@ -65,6 +78,13 @@ const baseRoles: Role[] = [
         name: 'AML Analyst',
         description: 'Analyzes suspicious accounts, mule indicators, and investigator workflows.',
         permissionIds: ROLE_PERMISSIONS.aml_analyst,
+        isSystemRole: true,
+    },
+    {
+        id: 'security_analyst',
+        name: 'Security Analyst',
+        description: 'Monitors security events, investigates alerts, manages sessions, and reviews audit trails.',
+        permissionIds: ROLE_PERMISSIONS.security_analyst,
         isSystemRole: true,
     },
 ];
@@ -148,6 +168,8 @@ export const roleIdFromUserRole = (roleName: string): string => {
         'ml engineer': 'ml_engineer',
         'aml_analyst': 'aml_analyst',
         'aml analyst': 'aml_analyst',
+        'security_analyst': 'security_analyst',
+        'security analyst': 'security_analyst',
     };
 
     const key = normalized.toLowerCase().replace(/\s+/g, '_');

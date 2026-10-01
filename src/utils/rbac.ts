@@ -47,6 +47,12 @@ export const ROUTE_PERMISSION_MAP: Record<string, string[]> = {
     '/analyst/investigation': ['investigation_view'],
     '/analyst/network': ['account_view'],
     '/analyst/reports': ['aml_results_view'],
+    '/security/dashboard': ['security_dashboard_view'],
+    '/security/login-activity': ['security_events_view'],
+    '/security/alerts': ['security_events_view'],
+    '/security/sessions': ['security_sessions_view'],
+    '/security/audit-trail': ['security_audit_view'],
+    '/security/rate-limits': ['security_events_view'],
 };
 
 export const canAccessRoute = (user: Partial<User> | null | undefined, route: string): boolean => {

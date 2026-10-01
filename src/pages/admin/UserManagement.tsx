@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Search, X, UserPlus, Shield, Lock, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Search, X, UserPlus, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { UserRole } from '../../types/auth';
 import { useAuth } from '../../context/AuthContext';
 import { authApi } from '../../api/authApi';

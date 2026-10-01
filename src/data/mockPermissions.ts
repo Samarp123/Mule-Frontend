@@ -31,6 +31,12 @@ export const MOCK_PERMISSIONS: Permission[] = [
 
     { id: 'access_overview_view', name: 'ACCESS_OVERVIEW_VIEW', description: 'View RBAC access overview and mappings', module: 'RBAC / Access' },
     { id: 'role_assign', name: 'ROLE_ASSIGN', description: 'Assign or change roles for users', module: 'RBAC / Access' },
+
+    { id: 'security_events_view', name: 'SECURITY_EVENTS_VIEW', description: 'View login attempts and security alerts', module: 'Security' },
+    { id: 'security_sessions_view', name: 'SECURITY_SESSIONS_VIEW', description: 'View active user sessions', module: 'Security' },
+    { id: 'security_sessions_revoke', name: 'SECURITY_SESSIONS_REVOKE', description: 'Revoke active sessions / force logout', module: 'Security' },
+    { id: 'security_audit_view', name: 'SECURITY_AUDIT_VIEW', description: 'View immutable security audit logs', module: 'Security' },
+    { id: 'security_dashboard_view', name: 'SECURITY_DASHBOARD_VIEW', description: 'View security dashboard overview', module: 'Security' },
 ];
 
 export const PERMISSION_MAP = Object.fromEntries(MOCK_PERMISSIONS.map((permission) => [permission.id, permission]));

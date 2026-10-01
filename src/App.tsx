@@ -38,6 +38,14 @@ import { Investigation } from './pages/analyst/Investigation';
 import { NetworkVisualization } from './pages/analyst/NetworkVisualization';
 import { Reports } from './pages/analyst/Reports';
 
+// Security Analyst Pages
+import { SecurityDashboard } from './pages/security/SecurityDashboard';
+import { LoginActivity } from './pages/security/LoginActivity';
+import { SecurityAlerts } from './pages/security/SecurityAlerts';
+import { SessionManagement } from './pages/security/SessionManagement';
+import { SecurityAuditTrail } from './pages/security/SecurityAuditTrail';
+import { RateLimitMonitor } from './pages/security/RateLimitMonitor';
+
 export default function App() {
     return (
         <AuthProvider>
@@ -102,6 +110,23 @@ export default function App() {
                             <Route path="investigation" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['investigation_view']}><Investigation /></RoleProtectedRoute>} />
                             <Route path="network" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><NetworkVisualization /></RoleProtectedRoute>} />
                             <Route path="reports" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}><Reports /></RoleProtectedRoute>} />
+                        </Route>
+
+                        {/* Security Analyst Protected Hierarchy */}
+                        <Route
+                            path="/security"
+                            element={
+                                <RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_dashboard_view']}>
+                                    <DashboardLayout />
+                                </RoleProtectedRoute>
+                            }
+                        >
+                            <Route path="dashboard" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_dashboard_view']}><SecurityDashboard /></RoleProtectedRoute>} />
+                            <Route path="login-activity" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_events_view']}><LoginActivity /></RoleProtectedRoute>} />
+                            <Route path="alerts" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_events_view']}><SecurityAlerts /></RoleProtectedRoute>} />
+                            <Route path="sessions" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_sessions_view']}><SessionManagement /></RoleProtectedRoute>} />
+                            <Route path="audit-trail" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_audit_view']}><SecurityAuditTrail /></RoleProtectedRoute>} />
+                            <Route path="rate-limits" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_events_view']}><RateLimitMonitor /></RoleProtectedRoute>} />
                         </Route>
 
                         <Route path="*" element={<Navigate to="/" replace />} />

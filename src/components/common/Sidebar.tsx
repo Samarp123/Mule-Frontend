@@ -21,7 +21,11 @@ import {
     FileText,
     ChevronLeft,
     ChevronRight,
-    Shield
+    Shield,
+    LogIn,
+    AlertTriangle,
+    Wifi,
+    Zap
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types/auth';
@@ -59,6 +63,14 @@ const ROLE_NAV: Record<UserRole, NavItem[]> = {
         { label: 'Investigation', path: '/analyst/investigation', icon: Search, requiredPermissions: ['investigation_view'] },
         { label: 'Network Graph', path: '/analyst/network', icon: Share2, requiredPermissions: ['account_view'] },
         { label: 'Reports', path: '/analyst/reports', icon: FileText, requiredPermissions: ['aml_results_view'] },
+    ],
+    'Security Analyst': [
+        { label: 'Overview', path: '/security/dashboard', icon: LayoutDashboard, requiredPermissions: ['security_dashboard_view'] },
+        { label: 'Login Activity', path: '/security/login-activity', icon: LogIn, requiredPermissions: ['security_events_view'] },
+        { label: 'Security Alerts', path: '/security/alerts', icon: AlertTriangle, requiredPermissions: ['security_events_view'] },
+        { label: 'Active Sessions', path: '/security/sessions', icon: Wifi, requiredPermissions: ['security_sessions_view'] },
+        { label: 'Audit Trail', path: '/security/audit-trail', icon: FileText, requiredPermissions: ['security_audit_view'] },
+        { label: 'Rate Limits', path: '/security/rate-limits', icon: Zap, requiredPermissions: ['security_events_view'] },
     ],
 };
 

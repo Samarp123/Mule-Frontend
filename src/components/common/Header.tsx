@@ -8,6 +8,7 @@ const ROLE_COLORS: Record<UserRole, { bg: string; text: string; border: string }
     'Admin': { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30' },
     'ML Engineer': { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/30' },
     'AML Analyst': { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/30' },
+    'Security Analyst': { bg: 'bg-teal-500/10', text: 'text-teal-400', border: 'border-teal-500/30' },
 };
 
 export const Header: React.FC = () => {
