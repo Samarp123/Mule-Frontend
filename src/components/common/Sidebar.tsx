@@ -7,14 +7,9 @@ import {
     CheckSquare,
     Lock,
     FileSpreadsheet,
-    Database,
-    Network,
-    Cpu,
     BarChart3,
     Archive,
     History,
-    UploadCloud,
-    ListFilter,
     AlertOctagon,
     Search,
     Share2,
@@ -24,8 +19,7 @@ import {
     Shield,
     LogIn,
     AlertTriangle,
-    Wifi,
-    Zap
+    Wifi
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types/auth';
@@ -48,17 +42,12 @@ const ROLE_NAV: Record<UserRole, NavItem[]> = {
     ],
     'ML Engineer': [
         { label: 'Overview', path: '/ml/dashboard', icon: LayoutDashboard, requiredPermissions: ['model_view'] },
-        { label: 'Datasets', path: '/ml/datasets', icon: Database, requiredPermissions: ['model_view'] },
-        { label: 'Graph Statistics', path: '/ml/graph-stats', icon: Network, requiredPermissions: ['model_view'] },
-        { label: 'Training', path: '/ml/training', icon: Cpu, requiredPermissions: ['model_view'] },
         { label: 'Model Performance', path: '/ml/performance', icon: BarChart3, requiredPermissions: ['model_metrics_view'] },
         { label: 'Model Registry', path: '/ml/registry', icon: Archive, requiredPermissions: ['model_view'] },
         { label: 'Experiment History', path: '/ml/experiments', icon: History, requiredPermissions: ['model_results_view'] },
     ],
     'AML Analyst': [
         { label: 'Overview', path: '/analyst/dashboard', icon: LayoutDashboard, requiredPermissions: ['aml_results_view'] },
-        { label: 'Upload Dataset', path: '/analyst/upload', icon: UploadCloud, requiredPermissions: ['account_view'] },
-        { label: 'Detection Jobs', path: '/analyst/jobs', icon: ListFilter, requiredPermissions: ['aml_results_view'] },
         { label: 'Suspicious Accounts', path: '/analyst/accounts', icon: AlertOctagon, requiredPermissions: ['account_view'] },
         { label: 'Investigation', path: '/analyst/investigation', icon: Search, requiredPermissions: ['investigation_view'] },
         { label: 'Network Graph', path: '/analyst/network', icon: Share2, requiredPermissions: ['account_view'] },
@@ -70,7 +59,6 @@ const ROLE_NAV: Record<UserRole, NavItem[]> = {
         { label: 'Security Alerts', path: '/security/alerts', icon: AlertTriangle, requiredPermissions: ['security_events_view'] },
         { label: 'Active Sessions', path: '/security/sessions', icon: Wifi, requiredPermissions: ['security_sessions_view'] },
         { label: 'Audit Trail', path: '/security/audit-trail', icon: FileText, requiredPermissions: ['security_audit_view'] },
-        { label: 'Rate Limits', path: '/security/rate-limits', icon: Zap, requiredPermissions: ['security_events_view'] },
     ],
 };
 

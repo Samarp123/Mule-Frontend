@@ -25,7 +25,6 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string
 
 const TYPE_LABELS: Record<string, string> = {
     brute_force: 'Brute Force Attack',
-    rate_limit: 'Rate Limit Exceeded',
     suspicious_session: 'Suspicious Session',
     account_locked: 'Account Locked',
 };
@@ -48,7 +47,8 @@ export const SecurityAlerts: React.FC = () => {
             if (statusFilter) filters.status = statusFilter;
             if (typeFilter) filters.type = typeFilter;
             const data = await securityApi.getAlerts(filters);
-            setAlerts(data.alerts || []);
+            const filteredAlerts = (data.alerts || []).filter((a: SecurityAlertEntry) => a.type !== 'rate_limit');
+            setAlerts(filteredAlerts);
         } catch (err) {
             console.error('Failed to fetch alerts:', err);
         } finally {
@@ -82,7 +82,7 @@ export const SecurityAlerts: React.FC = () => {
                     <AlertTriangle className="w-5 h-5 text-amber-400" />
                     Security Alerts
                 </h1>
-                <p className="text-xs text-slate-400 mt-1">Brute-force detections, rate-limit violations, and suspicious activity alerts.</p>
+                <p className="text-xs text-slate-400 mt-1">Brute-force detections and suspicious activity alerts.</p>
             </div>
 
             {/* Filters */}
@@ -104,7 +104,6 @@ export const SecurityAlerts: React.FC = () => {
                 >
                     <option value="">All Types</option>
                     <option value="brute_force">Brute Force</option>
-                    <option value="rate_limit">Rate Limit</option>
                     <option value="suspicious_session">Suspicious Session</option>
                 </select>
                 <button

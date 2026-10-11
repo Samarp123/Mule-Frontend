@@ -22,17 +22,12 @@ import { AuditLogs } from './pages/admin/AuditLogs';
 
 // ML Pages
 import { MLDashboard } from './pages/ml/MLDashboard';
-import { Datasets } from './pages/ml/Datasets';
-import { GraphStatistics } from './pages/ml/GraphStatistics';
-import { Training } from './pages/ml/Training';
 import { ModelPerformance } from './pages/ml/ModelPerformance';
 import { ModelRegistry } from './pages/ml/ModelRegistry';
 import { ExperimentHistory } from './pages/ml/ExperimentHistory';
 
 // AML Analyst Pages
 import { AnalystDashboard } from './pages/analyst/AnalystDashboard';
-import { UploadDataset } from './pages/analyst/UploadDataset';
-import { DetectionJobs } from './pages/analyst/DetectionJobs';
 import { SuspiciousAccounts } from './pages/analyst/SuspiciousAccounts';
 import { Investigation } from './pages/analyst/Investigation';
 import { NetworkVisualization } from './pages/analyst/NetworkVisualization';
@@ -44,7 +39,6 @@ import { LoginActivity } from './pages/security/LoginActivity';
 import { SecurityAlerts } from './pages/security/SecurityAlerts';
 import { SessionManagement } from './pages/security/SessionManagement';
 import { SecurityAuditTrail } from './pages/security/SecurityAuditTrail';
-import { RateLimitMonitor } from './pages/security/RateLimitMonitor';
 
 export default function App() {
     return (
@@ -86,9 +80,6 @@ export default function App() {
                             }
                         >
                             <Route path="dashboard" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><MLDashboard /></RoleProtectedRoute>} />
-                            <Route path="datasets" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><Datasets /></RoleProtectedRoute>} />
-                            <Route path="graph-stats" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><GraphStatistics /></RoleProtectedRoute>} />
-                            <Route path="training" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><Training /></RoleProtectedRoute>} />
                             <Route path="performance" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_metrics_view']}><ModelPerformance /></RoleProtectedRoute>} />
                             <Route path="registry" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_view']}><ModelRegistry /></RoleProtectedRoute>} />
                             <Route path="experiments" element={<RoleProtectedRoute allowedRoles={['ML Engineer']} requiredPermissions={['model_results_view']}><ExperimentHistory /></RoleProtectedRoute>} />
@@ -104,8 +95,6 @@ export default function App() {
                             }
                         >
                             <Route path="dashboard" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}><AnalystDashboard /></RoleProtectedRoute>} />
-                            <Route path="upload" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><UploadDataset /></RoleProtectedRoute>} />
-                            <Route path="jobs" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}><DetectionJobs /></RoleProtectedRoute>} />
                             <Route path="accounts" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><SuspiciousAccounts /></RoleProtectedRoute>} />
                             <Route path="investigation" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['investigation_view']}><Investigation /></RoleProtectedRoute>} />
                             <Route path="network" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><NetworkVisualization /></RoleProtectedRoute>} />
@@ -126,7 +115,7 @@ export default function App() {
                             <Route path="alerts" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_events_view']}><SecurityAlerts /></RoleProtectedRoute>} />
                             <Route path="sessions" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_sessions_view']}><SessionManagement /></RoleProtectedRoute>} />
                             <Route path="audit-trail" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_audit_view']}><SecurityAuditTrail /></RoleProtectedRoute>} />
-                            <Route path="rate-limits" element={<RoleProtectedRoute allowedRoles={['Security Analyst']} requiredPermissions={['security_events_view']}><RateLimitMonitor /></RoleProtectedRoute>} />
+                            <Route path="rate-limits" element={<Navigate to="/security/dashboard" replace />} />
                         </Route>
 
                         <Route path="*" element={<Navigate to="/" replace />} />

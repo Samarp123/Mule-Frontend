@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Shield, Activity, AlertTriangle, Users, Clock, Zap,
+    Shield, Activity, AlertTriangle, Users, Clock,
     TrendingUp, Eye, ShieldAlert, LogIn
 } from 'lucide-react';
 import { securityApi } from '../../api/securityApi';
@@ -41,7 +41,6 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string
 
 const TYPE_LABELS: Record<string, string> = {
     brute_force: 'Brute Force',
-    rate_limit: 'Rate Limit',
     suspicious_session: 'Suspicious Session',
     account_locked: 'Account Locked',
 };
@@ -63,7 +62,7 @@ export const SecurityDashboard: React.FC = () => {
         try {
             const data = await securityApi.getDashboardStats();
             setStats(data.stats);
-            setRecentAlerts(data.recentAlerts || []);
+            setRecentAlerts((data.recentAlerts || []).filter((a: RecentAlert) => a.type !== 'rate_limit'));
             setRecentAudit(data.recentAuditEvents || []);
         } catch (err) {
             console.error('Failed to fetch dashboard data:', err);
@@ -97,7 +96,6 @@ export const SecurityDashboard: React.FC = () => {
         { label: 'Failed Logins (24h)', value: stats.failedLogins24h, icon: ShieldAlert, color: 'text-red-400' },
         { label: 'Active Alerts', value: stats.activeAlerts, icon: AlertTriangle, color: 'text-amber-400' },
         { label: 'Active Sessions', value: stats.activeSessions, icon: Users, color: 'text-emerald-400' },
-        { label: 'Rate Limit Violations', value: stats.rateLimitViolations24h, icon: Zap, color: 'text-orange-400' },
         { label: 'Total Users', value: stats.totalUsers, icon: TrendingUp, color: 'text-purple-400' },
     ];
 
@@ -107,20 +105,19 @@ export const SecurityDashboard: React.FC = () => {
                 <div>
                     <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
                         <Shield className="w-5 h-5 text-teal-400" />
-                        Security Operations Center
+                        Real-time security monitoring, threat detection
                     </h1>
-                    <p className="text-xs text-slate-400 mt-1">Real-time security monitoring, threat detection, and audit intelligence.</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 text-xs font-mono">
                         <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
-                        SOC Active
+                        Active
                     </span>
                 </div>
             </div>
 
             {/* Stat Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 {statCards.map((card) => {
                     const Icon = card.icon;
                     return (
@@ -214,7 +211,7 @@ export const SecurityDashboard: React.FC = () => {
                     <Clock className="w-4 h-4 text-sky-400" />
                     Security Posture Summary
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                     <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
                         <p className="text-slate-500">Login Success Rate</p>
                         <p className="mt-2 text-lg font-semibold text-emerald-400 font-mono">
@@ -232,10 +229,6 @@ export const SecurityDashboard: React.FC = () => {
                     <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
                         <p className="text-slate-500">Active Sessions</p>
                         <p className="mt-2 text-lg font-semibold text-blue-400 font-mono">{stats.activeSessions}</p>
-                    </div>
-                    <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-                        <p className="text-slate-500">Rate Limit Events</p>
-                        <p className="mt-2 text-lg font-semibold text-orange-400 font-mono">{stats.rateLimitViolations24h}</p>
                     </div>
                 </div>
             </div>
