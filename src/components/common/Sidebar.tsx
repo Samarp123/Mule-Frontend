@@ -51,6 +51,7 @@ const ROLE_NAV: Record<UserRole, NavItem[]> = {
         { label: 'Suspicious Accounts', path: '/analyst/accounts', icon: AlertOctagon, requiredPermissions: ['account_view'] },
         { label: 'Investigation', path: '/analyst/investigation', icon: Search, requiredPermissions: ['investigation_view'] },
         { label: 'Network Graph', path: '/analyst/network', icon: Share2, requiredPermissions: ['account_view'] },
+        { label: 'STRs', path: '/analyst/strs', icon: FileText, requiredPermissions: ['aml_results_view'] },
         { label: 'Reports', path: '/analyst/reports', icon: FileText, requiredPermissions: ['aml_results_view'] },
     ],
     'Security Analyst': [

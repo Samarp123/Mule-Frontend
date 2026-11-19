@@ -60,4 +60,5 @@ export const securityApi = {
         const response = await apiClient.get(`/security/rate-limit-violations?${params}`);
         return response.data;
     },
+
 };

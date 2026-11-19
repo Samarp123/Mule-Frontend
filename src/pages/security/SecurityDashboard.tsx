@@ -41,7 +41,6 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string
 
 const TYPE_LABELS: Record<string, string> = {
     brute_force: 'Brute Force',
-    suspicious_session: 'Suspicious Session',
     account_locked: 'Account Locked',
 };
 

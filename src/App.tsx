@@ -32,6 +32,7 @@ import { SuspiciousAccounts } from './pages/analyst/SuspiciousAccounts';
 import { Investigation } from './pages/analyst/Investigation';
 import { NetworkVisualization } from './pages/analyst/NetworkVisualization';
 import { Reports } from './pages/analyst/Reports';
+import { STRs } from './pages/analyst/STRs';
 
 // Security Analyst Pages
 import { SecurityDashboard } from './pages/security/SecurityDashboard';
@@ -98,6 +99,7 @@ export default function App() {
                             <Route path="accounts" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><SuspiciousAccounts /></RoleProtectedRoute>} />
                             <Route path="investigation" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['investigation_view']}><Investigation /></RoleProtectedRoute>} />
                             <Route path="network" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['account_view']}><NetworkVisualization /></RoleProtectedRoute>} />
+                            <Route path="strs" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}><STRs /></RoleProtectedRoute>} />
                             <Route path="reports" element={<RoleProtectedRoute allowedRoles={['AML Analyst']} requiredPermissions={['aml_results_view']}><Reports /></RoleProtectedRoute>} />
                         </Route>
 

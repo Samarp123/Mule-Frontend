@@ -25,7 +25,6 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string
 
 const TYPE_LABELS: Record<string, string> = {
     brute_force: 'Brute Force Attack',
-    suspicious_session: 'Suspicious Session',
     account_locked: 'Account Locked',
 };
 
@@ -104,7 +103,6 @@ export const SecurityAlerts: React.FC = () => {
                 >
                     <option value="">All Types</option>
                     <option value="brute_force">Brute Force</option>
-                    <option value="suspicious_session">Suspicious Session</option>
                 </select>
                 <button
                     onClick={fetchAlerts}

@@ -131,7 +131,7 @@ export const Login: React.FC = () => {
                         <p className="text-[11px] font-mono uppercase tracking-wider text-slate-500 mb-3 text-center">
                             Quick Select Demo Accounts
                         </p>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             <button
                                 type="button"
                                 onClick={() => setDemoAccount('admin', 'admin123')}
@@ -157,6 +157,14 @@ export const Login: React.FC = () => {
                             >
                                 <div className="font-semibold text-emerald-400">AML Analyst</div>
                                 <div className="text-[10px] text-slate-500 truncate">analyst</div>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setDemoAccount('securityanalyst', 'password123')}
+                                className="p-2 text-left bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-lg text-xs transition-colors"
+                            >
+                                <div className="font-semibold text-teal-400">Security Analyst</div>
+                                <div className="text-[10px] text-slate-500 truncate">securityanalyst</div>
                             </button>
                         </div>
                     </div>
